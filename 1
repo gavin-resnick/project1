@@ -1,0 +1,8 @@
+hti_fertility = fertility.where('geo', 'hti')
+hti_child_mortality = child_mortality.where('geo', 'hti')
+fertility_and_child_mortality = Table().with_columns('Children per woman', hti_fertility.column('children_per_woman_total_fertility'), 'Child deaths per 1000 born', hti_child_mortality.column('child_mortality_under_5_per_1000_born'),
+                                                 'time', hti_fertility.column('time'))
+post_1969_fertility_and_child_mortality = fertility_and_child_mortality.where('time', are.above_or_equal_to(1970))
+
+# Don't change this line!
+post_1969_fertility_and_child_mortality.scatter('Children per woman', 'Child deaths per 1000 born')
