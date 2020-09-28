@@ -1,0 +1,4 @@
+poverty_and_pop = latest_poverty.join('geo', pop1).drop('time').drop('time_2')
+recent_poverty_total = poverty_and_pop.with_columns('poverty_total', np.round(.01*(poverty_and_pop.column('poverty_percent')
+                                                    * poverty_and_pop.column('population_total'))))
+recent_poverty_total
