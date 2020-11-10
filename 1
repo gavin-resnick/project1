@@ -1,8 +1,24 @@
-hti_fertility = fertility.where('geo', 'hti')
-hti_child_mortality = child_mortality.where('geo', 'hti')
-fertility_and_child_mortality = Table().with_columns('Children per woman', hti_fertility.column('children_per_woman_total_fertility'), 'Child deaths per 1000 born', hti_child_mortality.column('child_mortality_under_5_per_1000_born'),
-                                                 'time', hti_fertility.column('time'))
-post_1969_fertility_and_child_mortality = fertility_and_child_mortality.where('time', are.above_or_equal_to(1970))
+def complete_test(t):
+    
+    i = make_array()
+   
+    for n in np.arange(100):
+        sample = t.sample(t.num_rows, with_replacement=True)
+        new_table = Table().with_columns('Condition', make_array('Control', 'Diet'), 
+                                      'Died sum', make_array(sample.where('Died', True).where('Condition', 'Control').num_rows,
+                                                             sample.where('Died', True).where('Condition', 'Diet').num_rows),
+                                      'Participated sum', make_array(sample.where('Condition', 'Control').where('Participated', True).num_rows,
+                                                                     sample.where('Condition', 'Diet').where('Participated', True).num_rows))
+        
+        w_hazard = new_table.with_column('Hazard Rate', make_array(new_table.column('Died sum').item(0)/
+                                                                  new_table.column('Participated sum').item(0),
+                                                                  (new_table.column('Died sum').item(1)/
+                                                                  new_table.column('Participated sum').item(1))))
+                                                                
+        j = compute_hazard_difference(w_hazard)
+        
+        i = np.append(i, j)
+    return i
 
-# Don't change this line!
-post_1969_fertility_and_child_mortality.scatter('Children per woman', 'Child deaths per 1000 born')
+our_p_value = complete_test(minnesota_data)
+our_p_value
