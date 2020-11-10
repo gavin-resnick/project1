@@ -4,7 +4,7 @@ def complete_test(t):
    
     for n in np.arange(100):
         sample = t.sample(t.num_rows, with_replacement=True)
-        new_table = Table().with_columns('Condition', make_array('Control', 'Diet'), 
+        new_table = t.with_columns('Condition', sample.column('Condition'), 
                                       'Died sum', make_array(sample.where('Died', True).where('Condition', 'Control').num_rows,
                                                              sample.where('Died', True).where('Condition', 'Diet').num_rows),
                                       'Participated sum', make_array(sample.where('Condition', 'Control').where('Participated', True).num_rows,
