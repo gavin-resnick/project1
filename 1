@@ -1,12 +1,6 @@
-def distance(features_array1, features_array2):
-    """The Euclidean distance between two arrays of feature values."""
-    z = make_array()
-    for i in np.arange(len(features_array1)):
-        j = (features_array1.item(i)-features_array2.item(i))**2
-        z = np.append(z, j)
-    return (sum(z))**.5
-
-
-distance_first_to_second = distance(np.array(train_movies.drop(np.arange(5)).row(0)), 
-                                    np.array(train_movies.drop(np.arange(5)).row(1)))
-distance_first_to_second
+# The staff solution took multiple lines of code.
+genre_and_distances = Table().with_columns('Genre', train_movies.column('Genre'), 
+                                           'Distance', 
+                                           (fast_distances(test_movies.drop(np.arange(5)).select(my_features).row(0), 
+                                                           train_movies.drop(np.arange(5)).select(my_features)))).sort('Distance')
+genre_and_distances
