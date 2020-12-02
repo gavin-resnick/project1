@@ -1,6 +1,17 @@
-# The staff solution took multiple lines of code.
-genre_and_distances = Table().with_columns('Genre', train_movies.column('Genre'), 
-                                           'Distance', 
-                                           (fast_distances(test_movies.drop(np.arange(5)).select(my_features).row(0), 
-                                                           train_movies.drop(np.arange(5)).select(my_features)))).sort('Distance')
-genre_and_distances
+def row_to_array(row, features):
+    arr = make_array()
+    for feature in features:
+        arr = np.append(arr, row.item(feature))
+    return arr
+
+def classify(row, k, train):
+    test_row_features_array = row_to_array(row, features)
+    distances = make_array()
+    for train_row in train.rows:
+        train_row_features_array = row_to_array(train_row, features)
+        row_distance = distance(train_row_features_array, test_row_features_array)
+        distances = np.append(distances, row_distance)
+    train_with_distances = train.with_column('distances', distances).sort('distances').take(np.arange(k))
+    nearest_neighbors = train_with_distances.group('school').sort('count', descending=True)
+    most_common_label = nearest_neighbors.column('school').item(0)
+    return most_common_label
